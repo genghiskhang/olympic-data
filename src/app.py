@@ -5,13 +5,18 @@ import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 import json
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Dash(
     __name__,
     external_stylesheets=[
         dbc.themes.BOOTSTRAP,
         dbc.icons.FONT_AWESOME
-    ]
+    ],
+    # use_pages=True
 )
 
 df = pd.read_csv("aid_data.csv")
@@ -84,7 +89,7 @@ app.layout = html.Div([
     ]
 )
 def update_modal(clickData, is_open):
-    print(clickData)
+    # print(clickData)
     if clickData:
         return clickData["points"][0]["location"], not is_open
     return None, is_open
