@@ -1,0 +1,54 @@
+.vis-card {
+    position: relative;
+    display: inline-block;
+    width: 600px;
+    height: 300px;
+    margin:10px;
+    background: #e8e8e8;
+    border: 1px solid #fff;
+    box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.35);
+    border-radius: 6px;
+    color: black;
+    padding: 10px;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    font-family: Arial, sans-serif;
+}
+
+.vis-card::before {
+    position: absolute;
+    display: inline-block;
+    left: 0;
+    width: 100%;
+    height: 60%;
+    padding: 10px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.7) 100%);
+    color: #fff;
+    overflow-x: hidden;
+    overflow-y: auto;
+    opacity: 0;
+    transform: translateY(200%);
+    transition: all 300ms ease-in-out;
+  }
+
+.vis-card:hover::before {
+    opacity: 1;
+    transform: translateY(100%);
+}
+
+.vis-card.caption-choropleth::before {
+    content: "Total Medals Won by Country Interactive Map (Choropleth)";
+}
+
+.vis-card.caption-heatmap::before {
+    content: "Total Medals Won by Height-Weight (Heatmap)";
+}
+
+.vis-card.img-choropleth {
+    background-image: url("choropleth.png");
+}
+
+.vis-card.img-heatmap {
+    background-image: url("heatmap.png");
+}
