@@ -16,3 +16,10 @@ MacOS/Linux: `source .venv/bin/activate`
 Create a `.env` file in the project's root directory
 
 Environment variables will be stored in this file, such as keys and endpoint URIs
+
+## Running the Dash App
+
+```
+cd src
+python app.py
+```
