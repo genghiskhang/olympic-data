@@ -18,26 +18,31 @@ register_page(
 athlete_events_df = pd.read_csv("./assets/athlete_events.csv")
 noc_regions_df = pd.read_csv("./assets/noc_regions.csv")
 
-# Group total medals won by NOC, removing duplicates from individuals winning medals from team sports to only count one medal
-medals_country_df = athlete_events_df.dropna(subset=["Medal"])
-medals_country_df = medals_country_df.drop_duplicates(subset=["NOC", "Games", "Year", "Season", "City", "Sport", "Event", "Medal"])
-medals_country_df = medals_country_df.merge(noc_regions_df, on="NOC", how="left")
-medals_country_df = medals_country_df.groupby(["region", "Medal"])["Medal"].count().unstack(fill_value=0).stack().reset_index(name="Medal Count")
-medals_country_df = medals_country_df.groupby(["region"])["Medal Count"].sum().reset_index(name="Total Medals")
+medals_won_df = athlete_events_df.drop_duplicates(subset=["NOC", "Games", "Year", "Season", "City", "Sport", "Event"])
+medals_won_df = athlete_events_df.merge(noc_regions_df, on="NOC", how="left")
+medals_won_df = medals_won_df.groupby(["region"])["Medal"].count().reset_index(name="Won")
+
+medals_attempted_df = athlete_events_df.drop_duplicates(subset=["NOC", "Games", "Year", "Season", "City", "Sport", "Event"])
+medals_attempted_df = athlete_events_df.merge(noc_regions_df, on="NOC", how="left")
+medals_attempted_df["Medal"] = medals_attempted_df["Medal"].fillna("None")
+medals_attempted_df = medals_attempted_df.groupby(["region"])["Medal"].count().reset_index(name="Attempted")
+
+success_rate_df = medals_won_df.merge(medals_attempted_df, on="region", how="left")
+success_rate_df["Success Rate"] = success_rate_df["Won"] / success_rate_df["Attempted"]
+success_rate_df[success_rate_df["region"] == "Norway"]
 
 # Choropleth figure
 choropleth_fig = px.choropleth(
-    medals_country_df,
-    title="Total Medals Won by Country",
+    success_rate_df,
+    title="Success Rate for Medals Won by Country",
     locations="region",
     locationmode="country names",
     hover_name="region",
     hover_data=dict(
         region=False
     ),
-    color="Total Medals",
-    range_color=[0, 500],
-    color_continuous_scale="Viridis",
+    color="Success Rate",
+    color_continuous_scale="BuGn",
     projection="natural earth"
 )
 
