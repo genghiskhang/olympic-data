@@ -38,11 +38,15 @@
 }
 
 .vis-card.caption-choropleth::before {
-    content: "Total Medals Won by Country Interactive Map (Choropleth)";
+    content: "Success Rate for Medals Won by Country (Choropleth)";
 }
 
 .vis-card.caption-heatmap::before {
-    content: "Total Medals Won by Height-Weight (Heatmap)";
+    content: "Total Medals Won by Height and Weight separated by Gender (Heatmap)";
+}
+
+.vis-card.caption-sankey::before {
+    content: "Athlete Performance Over First 4 Games (Heatmap)";
 }
 
 .vis-card.img-choropleth {
@@ -51,4 +55,8 @@
 
 .vis-card.img-heatmap {
     background-image: url("heatmap.png");
+}
+
+.vis-card.img-sankey {
+    background-image: url("sankey.png");
 }
