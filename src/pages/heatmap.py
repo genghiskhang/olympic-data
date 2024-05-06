@@ -19,11 +19,13 @@ register_page(
 athlete_events_df = pd.read_csv("./assets/athlete_events.csv")
 noc_regions_df = pd.read_csv("./assets/noc_regions.csv")
 
+BINS = 24
+
 # Create bins for height and weight
 height_weight_medal_df = athlete_events_df.copy()
 height_weight_medal_df = height_weight_medal_df.dropna(subset=["Height", "Weight"])
-height_weight_medal_df["Height Bin"] = pd.cut(height_weight_medal_df["Height"], bins=20)
-height_weight_medal_df["Weight Bin"] = pd.cut(height_weight_medal_df["Weight"], bins=20)
+height_weight_medal_df["Height Bin"] = pd.cut(height_weight_medal_df["Height"], bins=BINS)
+height_weight_medal_df["Weight Bin"] = pd.cut(height_weight_medal_df["Weight"], bins=BINS)
 
 # Group by sports, separated by sex
 height_weight_medal_df = height_weight_medal_df.groupby(["Sport", "Sex", "Height Bin", "Weight Bin"], observed=False)["Medal"].count().reset_index(name="Medal Count")
