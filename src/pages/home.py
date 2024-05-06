@@ -20,11 +20,16 @@ layout = html.Div([
     html.A(
         className="vis-card img-choropleth caption-choropleth",
         href="/choropleth",
-        target="_blank"
+        # target="_blank"
     ),
     html.A(
         className="vis-card img-heatmap caption-heatmap",
         href="/heatmap",
-        target="_blank"
+        # target="_blank"
+    ),
+    html.A(
+        className="vis-card img-sankey caption-sankey",
+        href="/sankey",
+        # target="_blank"
     )
 ])
