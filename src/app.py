@@ -41,7 +41,7 @@ def serve_layout():
         navbar,
         dbc.Container(
             page_container,
-            class_name="my-2"
+            class_name="my-2 vis-container"
         )
     ])
 

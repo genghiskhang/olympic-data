@@ -20,30 +20,41 @@ noc_regions_df = pd.read_csv("./assets/noc_regions.csv")
 
 medals_won_df = athlete_events_df.drop_duplicates(subset=["NOC", "Games", "Year", "Season", "City", "Sport", "Event"])
 medals_won_df = athlete_events_df.merge(noc_regions_df, on="NOC", how="left")
-medals_won_df = medals_won_df.groupby(["region"])["Medal"].count().reset_index(name="Won")
+medals_won_df = medals_won_df.groupby(["Year", "region"])["Medal"].count().reset_index(name="Won")
+medals_won_df
 
 medals_attempted_df = athlete_events_df.drop_duplicates(subset=["NOC", "Games", "Year", "Season", "City", "Sport", "Event"])
 medals_attempted_df = athlete_events_df.merge(noc_regions_df, on="NOC", how="left")
 medals_attempted_df["Medal"] = medals_attempted_df["Medal"].fillna("None")
-medals_attempted_df = medals_attempted_df.groupby(["region"])["Medal"].count().reset_index(name="Attempted")
+medals_attempted_df = medals_attempted_df.groupby(["Year", "region"])["Medal"].count().reset_index(name="Attempted")
 
-success_rate_df = medals_won_df.merge(medals_attempted_df, on="region", how="left")
+success_rate_df = medals_won_df.merge(medals_attempted_df, on=["Year", "region"], how="left")
 success_rate_df["Success Rate"] = success_rate_df["Won"] / success_rate_df["Attempted"]
-success_rate_df[success_rate_df["region"] == "Norway"]
+
+success_rate_df
 
 # Choropleth figure
 choropleth_fig = px.choropleth(
     success_rate_df,
+    animation_frame='Year',
+    animation_group='Success Rate',
     title="Success Rate for Medals Won by Country",
     locations="region",
     locationmode="country names",
     hover_name="region",
     hover_data=dict(
-        region=False
+        region=False,
+        Year=False
     ),
     color="Success Rate",
     color_continuous_scale="BuGn",
     projection="natural earth"
+)
+choropleth_fig["layout"].pop("updatemenus")
+choropleth_fig.update_layout(
+    margin=dict(l=80, r=80, t=60, b=60),
+    width=800,
+    height=600
 )
 
 # Group total medals won by NOC, removing duplicates from individuals winning medals from team sports to only count one medal
@@ -64,10 +75,13 @@ for key, noc in noc_df_list.items():
             y=noc["Medal Count"]
         )
     )
+    medals_fig_list[key].update_layout(
+        xaxis={'categoryorder':'array', 'categoryarray':["Bronze", "Silver", "Gold"]}
+    )
 
 choropleth_fig.update_layout(clickmode="event+select")
 
-layout = html.Div([
+layout = html.Div(id="choropleth-container", children=[
     dcc.Graph(
         id="choropleth",
         figure=choropleth_fig
@@ -104,6 +118,8 @@ def update_modal(clickData, is_open, figure):
         raise PreventUpdate
     if figure is None:
         raise PreventUpdate
+    
+    print(clickData)
         
     if clickData:
         return clickData["points"][0]["location"], not is_open, medals_fig_list[clickData["points"][0]["hovertext"]]

@@ -60,3 +60,9 @@
 .vis-card.img-sankey {
     background-image: url("sankey.png");
 }
+
+.vis-container {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
