@@ -61,23 +61,29 @@ choropleth_fig.update_layout(
 medals_distribution_df = athlete_events_df.dropna(subset=["Medal"])
 medals_distribution_df = medals_distribution_df.drop_duplicates(subset=["NOC", "Games", "Year", "Season", "City", "Sport", "Event", "Medal"])
 medals_distribution_df = medals_distribution_df.merge(noc_regions_df, on="NOC", how="left")
-medals_distribution_df = medals_distribution_df.groupby(["region", "Medal"])["Medal"].count().unstack(fill_value=0).stack().reset_index(name="Medal Count")
+medals_distribution_df = medals_distribution_df.groupby(["Year", "region", "Medal"])["Medal"].count().unstack(fill_value=0).stack().reset_index(name="Medal Count")
+
+color_seq = ["#CD7F32", "#C0C0C0", "#D4AF37"]
 
 # List of medals won by NOC
-noc_df_list = {col:noc for (col, noc) in medals_distribution_df.groupby("region")}
+year_df_list = {col:year for (col, year) in medals_distribution_df.groupby("Year")}
 
 # Bar figure
 medals_fig_list = {}
-for key, noc in noc_df_list.items():
-    medals_fig_list[key] = go.Figure(
-        data=go.Bar(
-            x=noc["Medal"],
-            y=noc["Medal Count"]
+for year, df in year_df_list.items():
+    for (country, row) in df.groupby('region'):
+        if year not in medals_fig_list:
+            medals_fig_list[year] = {}
+        medals_fig_list[year][country] = go.Figure(
+            data=go.Bar(
+                x=row["Medal"],
+                y=row["Medal Count"],
+            )
         )
-    )
-    medals_fig_list[key].update_layout(
-        xaxis={'categoryorder':'array', 'categoryarray':["Bronze", "Silver", "Gold"]}
-    )
+        medals_fig_list[year][country].update_layout(
+            title=f"{country} in {year}",
+            xaxis={'categoryorder':'array', 'categoryarray':["Bronze", "Silver", "Gold"]}
+        )
 
 choropleth_fig.update_layout(clickmode="event+select")
 
@@ -92,7 +98,7 @@ layout = html.Div(id="choropleth-container", children=[
         ])),
         dcc.Graph(
             id="drill-in",
-            figure=medals_fig_list["USA"]
+            figure=go.Figure()
         )],
         id="modal-sm",
         size="sm",
@@ -105,22 +111,25 @@ layout = html.Div(id="choropleth-container", children=[
         Output("modal-sm", "is_open"),
         Output("drill-in", "figure")
     ],
-    [Input("choropleth", "clickData")],
+    [
+        Input("choropleth", "clickData"),
+        Input("choropleth", "figure")
+    ],
     [
         State("modal-sm", "is_open"),
         State("drill-in", "figure")
     ]
 )
-def update_modal(clickData, is_open, figure):
+def update_modal(clickData, cho_fig, is_open, figure):
     if clickData is None:
+        raise PreventUpdate
+    if cho_fig is None:
         raise PreventUpdate
     if is_open is None:
         raise PreventUpdate
     if figure is None:
         raise PreventUpdate
-    
-    print(clickData)
         
     if clickData:
-        return clickData["points"][0]["location"], not is_open, medals_fig_list[clickData["points"][0]["hovertext"]]
+        return clickData["points"][0]["hovertext"], not is_open, medals_fig_list[int(cho_fig['layout']['sliders'][0]['steps'][cho_fig['layout']['sliders'][0]['active']]['label'])][clickData["points"][0]["hovertext"]]
     return None, is_open, None
