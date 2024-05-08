@@ -159,5 +159,10 @@ layout = html.Div([
     dcc.Graph(
         id="heatmap",
         figure=heatmap_fig
-    )
+    ),
+    html.P("""Two juxtaposing heat maps displaying the correlation between height and 
+           weight, and amount of medals won, with data separated by gender. Hovering 
+           over individual cells displays the exact amount of medals won for that height 
+           and weight pair. A dropdown feature allows the user to filter between different 
+           sports and see how the correlation changes between each sport.""")
 ])

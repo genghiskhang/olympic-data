@@ -99,11 +99,16 @@ layout = html.Div(id="choropleth-container", children=[
         dcc.Graph(
             id="drill-in",
             figure=go.Figure()
-        )],
-        id="modal-sm",
-        size="sm",
-        is_open=False,
-    ) 
+        ),
+        html.P("A bar chart displaying the distribution of medals won by each individual country."),
+    ],
+    id="modal-sm",
+    size="sm",
+    is_open=False,
+    ),
+    html.P("""A choropleth figure displaying the proportion of total medals won across all 
+               countries out of total medals attempted. Hovering over a specific country will 
+               display the olympic success rate for that country."""),
 ])
 
 @callback([
