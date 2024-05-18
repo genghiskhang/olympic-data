@@ -32,6 +32,11 @@ layout = html.Div([
             className="vis-card img-sankey caption-sankey",
             href="/sankey",
             # target="_blank"
+            ),
+        html.A(
+            className="vis-card img-bank caption-bank",
+            href="/bank",
+            # target="_blank"
     )]),
     html.H4(["Greetings, enthusiasts of the Olympic spirit", html.Br(), """Welcome to an 
             immersive exploration into Olympic history. Dating back to the 1800’s, the 

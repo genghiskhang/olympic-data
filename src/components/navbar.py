@@ -6,6 +6,7 @@ navbar = dbc.NavbarSimple(
         dbc.NavItem(dbc.NavLink("Choropleth", href="/choropleth")),
         dbc.NavItem(dbc.NavLink("Heatmap", href="/heatmap")),
         dbc.NavItem(dbc.NavLink("Sankey", href="/sankey")),
+        dbc.NavItem(dbc.NavLink("Axis Banking", href="/bank")),
     ],
     brand="Olympic Data Visualizations",
     brand_href="/",

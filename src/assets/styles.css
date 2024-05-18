@@ -49,6 +49,10 @@
     content: "Athlete Performance Over First 4 Games (Heatmap)";
 }
 
+.vis-card.caption-bank::before {
+    content: "Implementation of Axis Banking to 45 Degrees for A3";
+}
+
 .vis-card.img-choropleth {
     background-image: url("choropleth.png");
 }
@@ -59,6 +63,10 @@
 
 .vis-card.img-sankey {
     background-image: url("sankey.png");
+}
+
+.vis-card.img-bank {
+    background-image: url("bank.png");
 }
 
 .vis-container {
