@@ -57,12 +57,12 @@ bank_fig_after = px.line(filtered_success_rate_df, x="Year", y="Success Rate", c
 bank_fig_after.add_scatter(x=usa_data['Year'], y=fit_fn(usa_data['Year']), mode='lines', name='USA Trendline')
 
 # Adjust y-axis to make the trendline have a slope of 45 degrees
-y_min = fit_fn(MIN_YEAR - 10)
-y_max = fit_fn(MAX_YEAR + 10)
+y_min = fit_fn(MIN_YEAR-6)
+y_max = fit_fn(MAX_YEAR+6)
 bank_fig_after.update_yaxes(range=[y_min, y_max])
 
 # Add equivalent padding to the x-axis
-bank_fig_after.update_xaxes(range=[MIN_YEAR - 10, MAX_YEAR + 10])
+bank_fig_after.update_xaxes(range=[MIN_YEAR-6, MAX_YEAR+6])
 
 layout = html.Div([
     html.H1("""USA vs China: How Do They Compare in Modern Day Olympic Success?"""),
