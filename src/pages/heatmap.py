@@ -16,18 +16,12 @@ register_page(
     title="Heatmap"
 )
 
-athlete_events_df = pd.read_csv("./assets/athlete_events.csv")
-noc_regions_df = pd.read_csv("./assets/noc_regions.csv")
+height_weight_medal_df = pd.read_csv('./datasets/height_weight_medals_clean.csv')
 
 BINS = 24
-
 # Create bins for height and weight
-height_weight_medal_df = athlete_events_df.copy()
-height_weight_medal_df = height_weight_medal_df.dropna(subset=["Height", "Weight"])
 height_weight_medal_df["Height Bin"] = pd.cut(height_weight_medal_df["Height"], bins=BINS)
 height_weight_medal_df["Weight Bin"] = pd.cut(height_weight_medal_df["Weight"], bins=BINS)
-
-# Group by sports, separated by sex
 height_weight_medal_df = height_weight_medal_df.groupby(["Sport", "Sex", "Height Bin", "Weight Bin"], observed=False)["Medal"].count().reset_index(name="Medal Count")
 
 # Create pivot tables for each sport and sex
@@ -159,10 +153,5 @@ layout = html.Div([
     dcc.Graph(
         id="heatmap",
         figure=heatmap_fig
-    ),
-    html.P("""Two juxtaposing heat maps displaying the correlation between height and 
-           weight, and amount of medals won, with data separated by gender. Hovering 
-           over individual cells displays the exact amount of medals won for that height 
-           and weight pair. A dropdown feature allows the user to filter between different 
-           sports and see how the correlation changes between each sport.""")
+    )
 ])

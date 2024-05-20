@@ -3,7 +3,5 @@
 .ipynb_checkpoints
 __pycache__
 init_data.py
+*_raw.csv
 prep_data.py
-datasets/
-images/
-styles/
