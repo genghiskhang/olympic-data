@@ -3,21 +3,14 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objects as go
 from dash.exceptions import PreventUpdate
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
 
 import pandas as pd
 import numpy as np
 
 import json
 import os
-from dotenv import load_dotenv#, find_dotenv
 
 from components import navbar
-
-load_dotenv()
-# uri = os.getenv("MONGODB_CONNECTION_STRING")
-# client = MongoClient(uri, server_api=ServerApi('1'))
 
 app = Dash(
     __name__,

@@ -15,23 +15,8 @@ register_page(
     title="Choropleth"
 )
 
-athlete_events_df = pd.read_csv("./assets/athlete_events.csv")
-noc_regions_df = pd.read_csv("./assets/noc_regions.csv")
-
-medals_won_df = athlete_events_df.drop_duplicates(subset=["NOC", "Games", "Year", "Season", "City", "Sport", "Event"])
-medals_won_df = athlete_events_df.merge(noc_regions_df, on="NOC", how="left")
-medals_won_df = medals_won_df.groupby(["Year", "region"])["Medal"].count().reset_index(name="Won")
-medals_won_df
-
-medals_attempted_df = athlete_events_df.drop_duplicates(subset=["NOC", "Games", "Year", "Season", "City", "Sport", "Event"])
-medals_attempted_df = athlete_events_df.merge(noc_regions_df, on="NOC", how="left")
-medals_attempted_df["Medal"] = medals_attempted_df["Medal"].fillna("None")
-medals_attempted_df = medals_attempted_df.groupby(["Year", "region"])["Medal"].count().reset_index(name="Attempted")
-
-success_rate_df = medals_won_df.merge(medals_attempted_df, on=["Year", "region"], how="left")
-success_rate_df["Success Rate"] = success_rate_df["Won"] / success_rate_df["Attempted"]
-
-success_rate_df
+success_rate_df = pd.read_csv('./datasets/success_rate_clean.csv')
+medals_distribution_df = pd.read_csv('./datasets/medals_distribution_clean.csv')
 
 # Choropleth figure
 choropleth_fig = px.choropleth(
@@ -57,13 +42,29 @@ choropleth_fig.update_layout(
     height=600
 )
 
-# Group total medals won by NOC, removing duplicates from individuals winning medals from team sports to only count one medal
-medals_distribution_df = athlete_events_df.dropna(subset=["Medal"])
-medals_distribution_df = medals_distribution_df.drop_duplicates(subset=["NOC", "Games", "Year", "Season", "City", "Sport", "Event", "Medal"])
-medals_distribution_df = medals_distribution_df.merge(noc_regions_df, on="NOC", how="left")
-medals_distribution_df = medals_distribution_df.groupby(["Year", "region", "Medal"])["Medal"].count().unstack(fill_value=0).stack().reset_index(name="Medal Count")
-
-color_seq = ["#CD7F32", "#C0C0C0", "#D4AF37"]
+# Choropleth figure
+choropleth_fig = px.choropleth(
+    success_rate_df,
+    animation_frame='Year',
+    animation_group='Success Rate',
+    title="Success Rate for Medals Won by Country",
+    locations="region",
+    locationmode="country names",
+    hover_name="region",
+    hover_data=dict(
+        region=False,
+        Year=False
+    ),
+    color="Success Rate",
+    color_continuous_scale="BuGn",
+    projection="natural earth"
+)
+choropleth_fig["layout"].pop("updatemenus")
+choropleth_fig.update_layout(
+    margin=dict(l=80, r=80, t=60, b=60),
+    width=800,
+    height=600
+)
 
 # List of medals won by NOC
 year_df_list = {col:year for (col, year) in medals_distribution_df.groupby("Year")}
@@ -105,10 +106,7 @@ layout = html.Div(id="choropleth-container", children=[
     id="modal-sm",
     size="sm",
     is_open=False,
-    ),
-    html.P("""A choropleth figure displaying the proportion of total medals won across all 
-               countries out of total medals attempted. Hovering over a specific country will 
-               display the olympic success rate for that country."""),
+    )
 ])
 
 @callback([
